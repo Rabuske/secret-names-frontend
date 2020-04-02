@@ -3,7 +3,7 @@ import {Chat} from './chat/Chat'
 import {Board} from './board/Board'
 import { useSelector } from 'react-redux';
 import { isConnectedSelector } from '../redux/connection/selectors';
-import { ConnectionPage } from './ConnectionPage';
+import { ConnectionPage } from './connection/ConnectionPage';
 
 const Game: React.FC<boolean> = props => {
     const isConnected = props;
