@@ -12,6 +12,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
+    "@types/react-grid-layout": "^0.17.1",
     "@types/react-redux": "^7.1.7",
     "@ui5/webcomponents": "1.0.0-rc.5",
     "@ui5/webcomponents-icons": "1.0.0-rc.5",

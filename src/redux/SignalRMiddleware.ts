@@ -84,7 +84,8 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       break;
  
     case sendMessageToChat.type:
-      _connection.invoke("SendChatMessage", action.payload.text);
+      //_connection.invoke("SendChatMessage", action.payload.text);
+      return next(action);
       break;
     default:
       return next(action);

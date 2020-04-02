@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Message } from '../../models/chat/message';
 import { useSelector, useDispatch } from 'react-redux';
 import { chatMessagesSelector } from '../../redux/chat/selectors';
-import { isConnectedSelector } from '../../redux/connection/selectors';
-import { TimelineItem } from '@ui5/webcomponents-react/lib/TimelineItem';
-import { Timeline } from '@ui5/webcomponents-react/lib/Timeline';
 import { Input } from '@ui5/webcomponents-react/lib/Input';
+import { Text } from '@ui5/webcomponents-react/lib/Text';
 import { Button } from '@ui5/webcomponents-react/lib/Button';
 import { ButtonDesign } from '@ui5/webcomponents-react/lib/ButtonDesign';
 import { Event } from '@ui5/webcomponents-react-base';
 import '@ui5/webcomponents-icons/dist/icons/post';
+import '@ui5/webcomponents-icons/dist/icons/add';
 import { sendMessageToChat } from '../../redux/chat/actions';
+import { useStyles } from './Chat.jss';
 
 interface ChatProps{
     messageText: string;
@@ -20,9 +20,10 @@ interface ChatProps{
 //export const Chat : React.FC<ChatProps> = props =>{
 export const Chat : React.FC = () =>{
     const dispatch = useDispatch();
+    const classes = useStyles();
+    const messageAreaRef = useRef(null);
 
     const messages : Message[] = useSelector(chatMessagesSelector);
-    const isConnected: boolean = useSelector(isConnectedSelector);
     const [ messageText, setMessageText ] = React.useState<string>('');
 
     const handleAddMessage = (event : Event): void =>{
@@ -32,46 +33,35 @@ export const Chat : React.FC = () =>{
         }
         dispatch(sendMessageToChat({text: messageText}));
         setMessageText('');
-
-        //
-        //if (timelineRef.current) {
-          //timelineRef.current.scrollTo(0, 0);
-        //}
     }
 
-    let chatMessageItems = messages.map((message, index) => (
-        <TimelineItem
-            key={index}
-            data-testid={`timeline-item-${index}`}
-            titleText={message.userName}
-            icon="post">
-        <div>{message.text}</div>
-       </TimelineItem>
-    ));
+    useEffect(() => {
+        //@ts-ignore
+        messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
+    });
 
     return (
-        <div>
-            <Timeline data-testid="timeline-component">
-                {chatMessageItems}
-            </Timeline>
-            <Input                
-                value={messageText}
-                placeholder={'Enter Your Message'}
-                disabled={!isConnected}
-                onInput={(event): void => setMessageText(event.parameters.value)}
-                //data-testid="add-query-input"
-                onSubmit={handleAddMessage}
-           />
-            <Button
-                //className={classes.queryButton}
-                design={ButtonDesign.Emphasized}
-                onClick={handleAddMessage}
-                disabled={!isConnected}
-                //data-testid="add-query-button"
-            >
-                Send Message
-            </Button>
-
+        <div className={classes.container}>
+            <div className={classes.messagesArea} ref={messageAreaRef}>
+                {messages.map((message, index) => 
+                    <p>
+                        <Text><b>{message.userName + ': '}</b>{message.text}</Text>
+                    </p>
+                )}
+            </div>
+            <div className={classes.inputArea}>
+                <Input                
+                    value={messageText}
+                    placeholder={'Enter Your Message'}
+                    onInput={(event): void => setMessageText(event.parameters.value)}
+                    onSubmit={handleAddMessage}
+                />
+                <Button
+                    design={ButtonDesign.Emphasized}
+                    onClick={handleAddMessage}
+                    icon={"add"}
+                />
+            </div>
         </div>
         
     );
