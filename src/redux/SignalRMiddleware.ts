@@ -7,9 +7,10 @@ import {
   LogLevel,
   HubConnection
 } from '@aspnet/signalr';
-import { setUserName, setIsHost, addUserToRoom, removeUserFromRoom } from "./game/actions";
+import { updateGame, setPlayer } from "./game/actions";
 import { store } from "../store";
 import { receiveMessage, sendMessageToChat } from "./chat/actions";
+import { Room } from "../models/game/room";
 
 let _connection : HubConnection;
 
@@ -36,22 +37,14 @@ const createSignalRConnection = (token: string) : void => {
     .build();
 }
 
-const onConnectionAcceptedAsGuest = (validUserName: string) : void => {
-  store.dispatch(connectionAccepted());  
-  store.dispatch(setUserName({userName : validUserName}));
-  store.dispatch(setIsHost({ isHost : true}));
-  console.log('onConnectionAcceptedAsGuest')
+const onConnectionAccepted = (validUserName: string) : void => {
+  store.dispatch(connectionAccepted());
+  store.dispatch(setPlayer({userName : validUserName}));
 }
 
-const onConnectionAcceptedAsHost = (validUserName: string) : void => {
-  store.dispatch(connectionAccepted());  
-  store.dispatch(setUserName({userName : validUserName}));
-  store.dispatch(setIsHost({ isHost : false}));
-  console.log('onConnectionAcceptedAsHost')
+const onUpdate = (room : Room) => {
+  store.dispatch(updateGame({ room : room }));
 }
-
-const onUserJoined = (userName : string) => store.dispatch(addUserToRoom(userName));
-const onUserLeft = (userName : string) => store.dispatch(removeUserFromRoom(userName));
 
 // I don't like these games
 const onChatMessageSent = (text : string, userName : string) => {
@@ -67,11 +60,9 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       createSignalRConnection(userName);
       startSignalRConnection(room, userName);
 
-      _connection.on("connectionAcceptedGuest", onConnectionAcceptedAsGuest);
-      _connection.on("onConnectionAcceptedAsHost", onConnectionAcceptedAsHost);
+      _connection.on("connectionAccepted", onConnectionAccepted);
+      _connection.on("updateGame", onUpdate);
 
-      _connection.on("userJoined", onUserJoined);
-      _connection.on("userLeft", onUserLeft);
       _connection.on("chatMessageSent", onChatMessageSent);
 
       // event handlers, you can use these to dispatch actions to update your Redux store
@@ -84,8 +75,8 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       break;
  
     case sendMessageToChat.type:
-      //_connection.invoke("SendChatMessage", action.payload.text);
-      return next(action);
+      _connection.invoke("SendChatMessage", action.payload.text);
+      
       break;
     default:
       return next(action);

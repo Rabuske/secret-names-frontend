@@ -10,11 +10,12 @@ export interface GameState{
 const initialState : GameState = {
     player: { 
         userName: 'User',
-        isHost: false
     },
     room: {
-        otherPlayers: [],
-        roomName: 'Room'
+        name: 'Room',
+        host: {userName: ''},
+        teamA: { name: "Team A", players: [] },
+        teamB: { name: "Team A", players: [] },
     }
 }
 
@@ -23,31 +24,13 @@ export const connectionSlice = createSlice({
     name: 'game',
     reducers: {
         // Middleware is responsible for connecting 
-        setRoomName: (state: GameState, action: PayloadAction<{roomName: string}>): void => { 
-            state.room.roomName = action.payload.roomName;
+        setPlayer: (state: GameState, action: PayloadAction<{userName: string}>): void => { 
+            state.player = { userName: action.payload.userName };
         },
 
-        setUserName: (state: GameState, action: PayloadAction<{userName: string}>): void => { 
-            state.player.userName = action.payload.userName;
+        updateGame: (state: GameState, action: PayloadAction<{room: Room}>): void => { 
+            state.room = action.payload.room;
         },
-
-        setIsHost: (state: GameState, action: PayloadAction<{isHost: boolean}>): void => { 
-            state.player.isHost = action.payload.isHost;
-        },
-
-        addUserToRoom: (state: GameState, action: PayloadAction<string>): void => { 
-            const newPlayer : Player = { 
-                userName: action.payload,
-                isHost: false
-            }
-            const players = state.room.otherPlayers;
-            players.push(newPlayer);
-        },
-
-        removeUserFromRoom: (state: GameState, action: PayloadAction<string>): void => { 
-            const nameOfPlayerToRemove = action.payload;
-            state.room.otherPlayers = state.room.otherPlayers.filter(player => player.userName !== nameOfPlayerToRemove);
-        },        
     }
 })
 

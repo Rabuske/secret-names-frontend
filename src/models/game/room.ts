@@ -1,6 +1,9 @@
 import { Player } from "./player";
+import { Team } from "./team";
 
 export interface Room{
-    roomName: string;
-    otherPlayers: Player[];
+    name: string;
+    host: Player;    
+    teamA: Team;
+    teamB: Team;
 }
