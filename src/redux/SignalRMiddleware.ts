@@ -7,10 +7,11 @@ import {
   LogLevel,
   HubConnection
 } from '@aspnet/signalr';
-import { updateGame, setPlayer } from "./game/actions";
+import { updateGame, setPlayer, switchTeamMember, startGame, submitClue, submitVoteForWord, removeVoteForWord } from "./game/actions";
 import { store } from "../store";
 import { receiveMessage, sendMessageToChat } from "./chat/actions";
 import { Room } from "../models/game/room";
+import { MessageToast } from '@ui5/webcomponents-react/lib/MessageToast';
 
 let _connection : HubConnection;
 
@@ -18,10 +19,13 @@ const startSignalRConnection = (room : string, userName: String) => _connection.
   .then(() => {
     _connection.invoke('RegisterNewUser', userName, room);
   })
-  .catch(err => console.error('SignalR Connection Error: ', err));
+  .catch(err => {
+    console.log(err);
+    MessageToast.error("Cannot Connect to Server");
+  });
 
 const createSignalRConnection = (token: string) : void => {
-  const url = process.env.REACT_APP_HUB_URL || 'https://localhost:5001/hub/game';
+  const url = process.env.REACT_APP_HUB_URL || 'https://condinomes-backend.azurewebsites.net/hub/game'; // Yes, this says "condinomes"
   const protocol = new JsonHubProtocol();
   const transport = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
   const options = {
@@ -37,19 +41,35 @@ const createSignalRConnection = (token: string) : void => {
     .build();
 }
 
-const onConnectionAccepted = (validUserName: string) : void => {
+const onConnectionAccepted = (validUserName: string, isHost: boolean) : void => {
   store.dispatch(connectionAccepted());
-  store.dispatch(setPlayer({userName : validUserName}));
+  store.dispatch(setPlayer({userName : validUserName, isHost: isHost }));
 }
 
 const onUpdate = (room : Room) => {
   store.dispatch(updateGame({ room : room }));
 }
 
-// I don't like these games
 const onChatMessageSent = (text : string, userName : string) => {
   store.dispatch(receiveMessage({text: text, userName: userName}));
 } 
+
+const onDisplayMessage = (messageType: string, messageText : string) => {
+  switch (messageType) {
+    case "ERROR":
+      MessageToast.error(messageText);
+      break;
+    case "SUCCESS":
+      MessageToast.success(messageText);
+      break;
+    case "WARNING":
+      MessageToast.success(messageText);
+      break;
+    default:
+      MessageToast.show(messageText);
+      break;
+  }
+}
 
 export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAPI) => next => (action: AnyAction) => {
   switch(action.type){
@@ -64,20 +84,35 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       _connection.on("updateGame", onUpdate);
 
       _connection.on("chatMessageSent", onChatMessageSent);
+      _connection.on("displayMessage", onDisplayMessage);
 
-      // event handlers, you can use these to dispatch actions to update your Redux store
-      //connection.on('OperationProgress', onNotifReceived);
-      //connection.on('UploadProgress', onNotifReceived);
-      //connection.on('DownloadProgress', onNotifReceived);
-
-      // re-establish the connection if connection dropped
-      //connection.onclose(() => setTimeout(5000));
       break;
  
     case sendMessageToChat.type:
       _connection.invoke("SendChatMessage", action.payload.text);
       
       break;
+    
+    case switchTeamMember.type:
+      _connection.invoke("SwitchTeamMember", action.payload.userName);
+      break;
+
+    case startGame.type:
+      _connection.invoke("StartGame");
+      break;
+
+    case submitClue.type:
+      _connection.invoke("ReceiveClue", action.payload.clue, action.payload.numberOfWords);
+      break;
+
+    case submitVoteForWord.type:
+      _connection.invoke("VoteForWord", action.payload.word);
+      break;
+
+    case removeVoteForWord.type:
+      _connection.invoke("RemoveVoteForWord", action.payload.word);
+      break;
+  
     default:
       return next(action);
   }

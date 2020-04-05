@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Room } from '../../models/game/room';
 import { Player } from '../../models/game/player';
+import { TEAM_A, TEAM_B } from '../../models/game/agent';
 
 export interface GameState{
     player: Player;
@@ -10,12 +11,26 @@ export interface GameState{
 const initialState : GameState = {
     player: { 
         userName: 'User',
+        isHost: false
     },
     room: {
         name: 'Room',
-        host: {userName: ''},
-        teamA: { name: "Team A", players: [] },
-        teamB: { name: "Team A", players: [] },
+        host: {userName: '', isHost: false},
+        teamA: { name: "Team A", players: [], id: TEAM_A },
+        teamB: { name: "Team B", players: [], id: TEAM_B },
+        board: { 
+            cards: [],
+            knowAllForTeamA: { userName: '', isHost: false},
+            knowAllForTeamB: { userName: '', isHost: false},
+        },
+        round: {
+            clue: '',
+            remainingGuesses: 0,
+            team: '',
+            votes: [],
+            isClueSubmitted: false,
+        },
+        hasGameStarted: false,
     }
 }
 
@@ -24,12 +39,36 @@ export const connectionSlice = createSlice({
     name: 'game',
     reducers: {
         // Middleware is responsible for connecting 
-        setPlayer: (state: GameState, action: PayloadAction<{userName: string}>): void => { 
-            state.player = { userName: action.payload.userName };
+        switchTeamMember : (state: GameState, action: PayloadAction<{userName: string}>): void => { 
+
+        },
+
+        startGame : (state: GameState, action: PayloadAction): void => { 
+
+        },
+
+        submitClue : (state: GameState, action: PayloadAction<{clue: string, numberOfWords: string}>): void => { 
+
+        },
+
+        submitVoteForWord : (state: GameState, action: PayloadAction<{word : string}>): void => { 
+
+        },
+
+        removeVoteForWord: (state: GameState, action: PayloadAction<{word : string}>): void => { 
+
+        },
+
+        setPlayer: (state: GameState, action: PayloadAction<{userName: string, isHost:boolean}>): void => { 
+            state.player = { 
+                userName: action.payload.userName,
+                isHost: action.payload.isHost
+            };
         },
 
         updateGame: (state: GameState, action: PayloadAction<{room: Room}>): void => { 
             state.room = action.payload.room;
+            state.player.isHost = state.room.host.userName === state.player.userName;
         },
     }
 })

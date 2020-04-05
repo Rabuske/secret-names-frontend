@@ -7,11 +7,11 @@ import { ConnectionPage } from './connection/ConnectionPage';
 
 import '../../node_modules/react-grid-layout/css/styles.css';
 import '../../node_modules/react-resizable/css/styles.css';
-import { Responsive, WidthProvider, Layout, Layouts } from 'react-grid-layout';
+import { Responsive, WidthProvider, Layouts } from 'react-grid-layout';
 import { useStyles } from './SecretNames.jss';
 import { Team } from './team/Team';
-import { GameControl } from './board/GameControl';
-import { TEAM_A, TEAM_B } from '../models/game/team';
+import { GameControlWrapper as GameControl } from './board/game-control/GameControlWrapper';
+import { TEAM_A, TEAM_B } from '../models/game/agent';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const gridSizing = 10;
@@ -91,8 +91,8 @@ const Game: React.FC<boolean> = props => {
                 breakpoints={{ lg: 1870, md: 1390, sm: 1230, xs: 970, xxs: 0 }}
                 >
               {createPanel(gridLayout.boardPanel.i, <Board/>)}
-              {createPanel(gridLayout.teamAPanel.i, <Team teamName={TEAM_A}/>)}
-              {createPanel(gridLayout.teamBPanel.i, <Team teamName={TEAM_B}/>)}
+              {createPanel(gridLayout.teamAPanel.i, <Team teamID={TEAM_A}/>)}
+              {createPanel(gridLayout.teamBPanel.i, <Team teamID={TEAM_B}/>)}
               {createPanel(gridLayout.controlPanel.i, <GameControl/>)}
               {createPanel(gridLayout.chatPanel.i, <Chat/>)}
 
