@@ -1,5 +1,5 @@
 import { MiddlewareAPI, Dispatch, Middleware, AnyAction } from "redux";
-import { connectToServer, connectionAccepted} from './connection/actions'
+import { connectToServer, connectionAccepted, disconnect} from './connection/actions'
 import {
   JsonHubProtocol,
   HttpTransportType,
@@ -7,7 +7,7 @@ import {
   LogLevel,
   HubConnection
 } from '@aspnet/signalr';
-import { updateGame, setPlayer, switchTeamMember, startGame, submitClue, submitVoteForWord, removeVoteForWord } from "./game/actions";
+import { updateGame, setPlayer, switchTeamMember, startGame, submitClue, submitVoteForWord, removeVoteForWord, passTurn } from "./game/actions";
 import { store } from "../store";
 import { receiveMessage, sendMessageToChat } from "./chat/actions";
 import { Room } from "../models/game/room";
@@ -32,7 +32,7 @@ const createSignalRConnection = (token: string) : void => {
     transport,
     logMessageContent: true,
     logger: LogLevel.Trace,
-    accessTokenFactory: () => token
+    accessTokenFactory: () => token,
   };
   // create the connection instance
   _connection = new HubConnectionBuilder()
@@ -86,6 +86,8 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       _connection.on("chatMessageSent", onChatMessageSent);
       _connection.on("displayMessage", onDisplayMessage);
 
+      _connection.onclose(() => store.dispatch(disconnect()));
+
       break;
  
     case sendMessageToChat.type:
@@ -110,9 +112,12 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       break;
 
     case removeVoteForWord.type:
-      _connection.invoke("RemoveVoteForWord", action.payload.word);
+      _connection.invoke("RemoveVoteForWord");
       break;
-  
+    
+    case passTurn.type:
+      _connection.invoke("PassTurn");
+      break;
     default:
       return next(action);
   }

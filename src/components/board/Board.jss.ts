@@ -4,7 +4,7 @@ import { createUseStyles, Styles } from 'react-jss';
 export const boardStyles : Styles = {
     gridContainer : {
         display: 'grid',
-        gridTemplateColumns: 'auto auto auto auto auto',
+        gridTemplateColumns: '20% 20% 20% 20% 20%',
         padding: '2px',
     },
     gridItem : {

@@ -10,4 +10,5 @@ export const {
     submitClue,
     submitVoteForWord,
     removeVoteForWord,
+    passTurn,
 } = actions;

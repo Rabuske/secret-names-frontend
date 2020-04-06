@@ -6,4 +6,5 @@ export interface Round {
     clue: string;
     remainingGuesses: number;
     isClueSubmitted: boolean;
+    numberOfWordsRelatedToGuess: number;
 }

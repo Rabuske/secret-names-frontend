@@ -22,6 +22,10 @@ export const connectionSlice = createSlice({
         connectionAccepted :  (state: ConnectionState, action: PayloadAction): void => { 
             state.isConnected = true;
         },
+
+        disconnect :  (state: ConnectionState, action: PayloadAction): void => { 
+            state.isConnected = false;
+        },
     }
 })
 

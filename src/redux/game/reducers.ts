@@ -29,6 +29,7 @@ const initialState : GameState = {
             team: '',
             votes: [],
             isClueSubmitted: false,
+            numberOfWordsRelatedToGuess: 0,
         },
         hasGameStarted: false,
     }
@@ -56,6 +57,10 @@ export const connectionSlice = createSlice({
         },
 
         removeVoteForWord: (state: GameState, action: PayloadAction<{word : string}>): void => { 
+
+        },
+
+        passTurn: (state: GameState, action: PayloadAction): void => { 
 
         },
 
