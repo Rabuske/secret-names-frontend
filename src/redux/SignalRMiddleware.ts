@@ -25,13 +25,13 @@ const startSignalRConnection = (room : string, userName: String) => _connection.
   });
 
 const createSignalRConnection = (token: string) : void => {
-  const url = process.env.REACT_APP_HUB_URL || 'https://condinomes-backend.azurewebsites.net/hub/game'; // Yes, this says "condinomes"
+  const url = process.env.REACT_APP_HUB_URL as string;
   const protocol = new JsonHubProtocol();
   const transport = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
   const options = {
     transport,
-    logMessageContent: true,
-    logger: LogLevel.Trace,
+    logMessageContent:  process.env.NODE_ENV === "development",
+    logger: process.env.NODE_ENV === "development" ? LogLevel.Trace : LogLevel.Critical,
     accessTokenFactory: () => token,
   };
   // create the connection instance

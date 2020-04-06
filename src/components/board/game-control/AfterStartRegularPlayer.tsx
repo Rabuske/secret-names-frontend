@@ -35,6 +35,7 @@ export const AfterStartRegularPlayer : React.FC = () => {
         <div className={classes.regularPlayerContainer}>
             <Text>{getTextForClueDisplay()}</Text>
             <Text>{getTextForRemainingGuessesDisplay()}</Text>
+            <p></p>
             {isPlayerInTeamCurrentlyPlaying && round.isClueSubmitted? 
                 <Button design={ButtonDesign.Reject} onClick={handlePassButtonClick}>Pass</Button>
             :''}

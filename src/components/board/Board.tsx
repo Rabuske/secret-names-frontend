@@ -4,6 +4,7 @@ import { useStyles } from './Board.jss';
 import { cardSelector, isTheKnowAllSelector, votesSelector, playerSelector, isPlayerInTeamCurrentlyPlayingSelector } from '../../redux/game/selectors';
 import { useSelector } from 'react-redux';
 import { Card } from '../../models/game/card';
+import { UNKNOWN } from '../../models/game/agent';
 
 export const Board : React.FC = () =>{
     const classes = useStyles();
@@ -16,12 +17,19 @@ export const Board : React.FC = () =>{
     const hasBeenVotedByPlayer = (card: Card) => {
         return votes.filter(vote => vote.userName === player.userName && vote.word === card.word).length > 0;
     }
+
+    const removeUnwantedData = (card: Card) : Card => {
+        return {
+            ...card, 
+            agent : isMapOwner || card.hasBeenRevealed ? card.agent : UNKNOWN
+        }
+    }
     
     return (
         <div className={classes.gridContainer}>
             {cards.map((card) => (
                 <div className={classes.gridItem}>
-                    <GameCard card={card} isMapOwner={isMapOwner} hasBeenVotedByPlayer={hasBeenVotedByPlayer(card)} isFromTeamPlaying={isPlayerInTeamCurrentlyPlaying}/>
+                    <GameCard card={removeUnwantedData(card)} isMapOwner={isMapOwner} hasBeenVotedByPlayer={hasBeenVotedByPlayer(card)} isFromTeamPlaying={isPlayerInTeamCurrentlyPlaying}/>
                 </div>
             ))}
         </div>
