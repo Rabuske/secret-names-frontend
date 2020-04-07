@@ -4,6 +4,5 @@ const { actions } = connectionSlice;
 
 export const {
     connectToServer,
-    connectionAccepted,
-    disconnect,
+    setConnectionStatus,
 } = actions;

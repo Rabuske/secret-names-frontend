@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ConnectionStatus } from '../../models/connection/ConnectionStatus';
 
 export interface ConnectionState{
     connectionId: string;
-    isConnected: boolean
+    connectionStatus: ConnectionStatus,
 }
 
 const initialState : ConnectionState = {
     connectionId: '',
-    isConnected: false
+    connectionStatus: ConnectionStatus.Disconnected,
 }
 
 export const connectionSlice = createSlice({
@@ -19,12 +20,8 @@ export const connectionSlice = createSlice({
 
         },
         
-        connectionAccepted :  (state: ConnectionState, action: PayloadAction): void => { 
-            state.isConnected = true;
-        },
-
-        disconnect :  (state: ConnectionState, action: PayloadAction): void => { 
-            state.isConnected = false;
+        setConnectionStatus : (state: ConnectionState, action: PayloadAction<ConnectionStatus>): void => { 
+            state.connectionStatus = action.payload;
         },
     }
 })

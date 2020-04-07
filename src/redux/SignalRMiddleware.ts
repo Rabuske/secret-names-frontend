@@ -1,5 +1,5 @@
 import { MiddlewareAPI, Dispatch, Middleware, AnyAction } from "redux";
-import { connectToServer, connectionAccepted, disconnect} from './connection/actions'
+import { connectToServer, setConnectionStatus} from './connection/actions'
 import {
   JsonHubProtocol,
   HttpTransportType,
@@ -12,6 +12,7 @@ import { store } from "../store";
 import { receiveMessage, sendMessageToChat } from "./chat/actions";
 import { Room } from "../models/game/room";
 import { MessageToast } from '@ui5/webcomponents-react/lib/MessageToast';
+import { ConnectionStatus } from "../models/connection/ConnectionStatus";
 
 let _connection : HubConnection;
 
@@ -20,8 +21,8 @@ const startSignalRConnection = (room : string, userName: String) => _connection.
     _connection.invoke('RegisterNewUser', userName, room);
   })
   .catch(err => {
-    console.log(err);
     MessageToast.error("Cannot Connect to Server");
+    store.dispatch(setConnectionStatus(ConnectionStatus.Disconnected));
   });
 
 const createSignalRConnection = (token: string) : void => {
@@ -30,7 +31,7 @@ const createSignalRConnection = (token: string) : void => {
   const transport = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
   const options = {
     transport,
-    logMessageContent:  process.env.NODE_ENV === "development",
+    logMessageContent: process.env.NODE_ENV === "development",
     logger: process.env.NODE_ENV === "development" ? LogLevel.Trace : LogLevel.Critical,
     accessTokenFactory: () => token,
   };
@@ -42,11 +43,12 @@ const createSignalRConnection = (token: string) : void => {
 }
 
 const onConnectionAccepted = (validUserName: string, isHost: boolean) : void => {
-  store.dispatch(connectionAccepted());
+  store.dispatch(setConnectionStatus(ConnectionStatus.Connected));
   store.dispatch(setPlayer({userName : validUserName, isHost: isHost }));
 }
 
 const onUpdate = (room : Room) => {
+  store.dispatch(setConnectionStatus(ConnectionStatus.Connected));
   store.dispatch(updateGame({ room : room }));
 }
 
@@ -76,6 +78,7 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
     case connectToServer.type:
       const userName = action.payload.userName as string;
       const room = action.payload.room as string;
+      store.dispatch(setConnectionStatus(ConnectionStatus.Connecting));
 
       createSignalRConnection(userName);
       startSignalRConnection(room, userName);
@@ -86,7 +89,7 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       _connection.on("chatMessageSent", onChatMessageSent);
       _connection.on("displayMessage", onDisplayMessage);
 
-      _connection.onclose(() => store.dispatch(disconnect()));
+      _connection.onclose(() => store.dispatch(setConnectionStatus(ConnectionStatus.Disconnected)));
 
       break;
  

@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import {Chat} from './chat/Chat'
 import {Board} from './board/Board'
 import { useSelector } from 'react-redux';
-import { isConnectedSelector } from '../redux/connection/selectors';
 import { ConnectionPage } from './connection/ConnectionPage';
 
 import '../../node_modules/react-grid-layout/css/styles.css';
@@ -12,6 +11,8 @@ import { useStyles } from './SecretNames.jss';
 import { Team } from './team/Team';
 import { GameControlWrapper as GameControl } from './board/game-control/GameControlWrapper';
 import { TEAM_A, TEAM_B } from '../models/game/agent';
+import { connectionStatusSelector } from '../redux/connection/selectors';
+import { ConnectionStatus } from '../models/connection/ConnectionStatus';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const gridSizing = 10;
@@ -104,5 +105,6 @@ const Game: React.FC<boolean> = props => {
 }
 
 export const SecretNames : React.FC = () =>{
-    return Game(useSelector(isConnectedSelector));
+    const isConnected = useSelector(connectionStatusSelector) === ConnectionStatus.Connected;
+    return Game(isConnected);
 }
