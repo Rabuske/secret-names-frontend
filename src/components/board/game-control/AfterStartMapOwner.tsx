@@ -20,6 +20,9 @@ export const AfterStartMapOwner : React.FC = () => {
     const isPlayerInTeamCurrentlyPlaying = useSelector(isPlayerInTeamCurrentlyPlayingSelector);
     
     const handleSubmitClueClick = (event: Event) => {
+        if(numberOfWords.length === 0){
+            return;
+        }
         dispatch(submitClue({clue:clue, numberOfWords:numberOfWords}));
         setClue("");
         setNumberOfWords("");
@@ -52,6 +55,7 @@ export const AfterStartMapOwner : React.FC = () => {
                 <Input 
                     value={clue} 
                     onChange={(event) => setClue(event.parameters.value)}
+                    onInput={(event) => setClue(event.parameters.value)}                    
                     disabled={isClueSubmitted}
                     placeholder={"Enter here your clue"}
                 />

@@ -89,7 +89,7 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       _connection.on("chatMessageSent", onChatMessageSent);
       _connection.on("displayMessage", onDisplayMessage);
 
-      _connection.onclose(() => store.dispatch(setConnectionStatus(ConnectionStatus.Disconnected)));
+      _connection.onclose(() => startSignalRConnection(room, userName));
 
       break;
  
