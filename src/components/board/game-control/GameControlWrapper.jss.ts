@@ -6,13 +6,20 @@ export const boardStyles : Styles = {
         textAlign: "center",
         paddingTop: "10px"
     },
-    startButton : {
+    buttons : {
         padding: "25px",
-        paddingTop: "5%",
+        paddingTop: "15px",
         textAlign: "center",
         display: 'flex',
         flexDirection: 'column',
         overflow: "hidden",
+    },
+    changeCoderButtons : {
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        paddingBottom: "10px",
     },
     regularPlayerContainer: {
         textAlign: "center",

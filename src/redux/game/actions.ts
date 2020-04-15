@@ -11,4 +11,6 @@ export const {
     submitVoteForWord,
     removeVoteForWord,
     passTurn,
+    changeCoderTeamA,
+    changeCoderTeamB,
 } = actions;

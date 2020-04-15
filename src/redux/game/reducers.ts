@@ -64,6 +64,14 @@ export const connectionSlice = createSlice({
 
         },
 
+        changeCoderTeamA: (state: GameState, action: PayloadAction): void => { 
+
+        },        
+
+        changeCoderTeamB: (state: GameState, action: PayloadAction): void => { 
+
+        },        
+
         setPlayer: (state: GameState, action: PayloadAction<{userName: string, isHost:boolean}>): void => { 
             state.player = { 
                 userName: action.payload.userName,

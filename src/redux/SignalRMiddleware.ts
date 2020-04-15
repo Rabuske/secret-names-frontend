@@ -7,7 +7,7 @@ import {
   LogLevel,
   HubConnection
 } from '@aspnet/signalr';
-import { updateGame, setPlayer, switchTeamMember, startGame, submitClue, submitVoteForWord, removeVoteForWord, passTurn } from "./game/actions";
+import { updateGame, setPlayer, switchTeamMember, startGame, submitClue, submitVoteForWord, removeVoteForWord, passTurn, changeCoderTeamA, changeCoderTeamB } from "./game/actions";
 import { store } from "../store";
 import { receiveMessage, sendMessageToChat } from "./chat/actions";
 import { Room } from "../models/game/room";
@@ -81,7 +81,6 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       store.dispatch(setConnectionStatus(ConnectionStatus.Connecting));
 
       createSignalRConnection(userName);
-      startSignalRConnection(room, userName);
 
       _connection.on("connectionAccepted", onConnectionAccepted);
       _connection.on("updateGame", onUpdate);
@@ -90,6 +89,8 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
       _connection.on("displayMessage", onDisplayMessage);
 
       _connection.onclose(() => startSignalRConnection(room, userName));
+
+      startSignalRConnection(room, userName);
 
       break;
  
@@ -121,6 +122,15 @@ export const SignalRMiddleware: Middleware<Dispatch> = ({dispatch}: MiddlewareAP
     case passTurn.type:
       _connection.invoke("PassTurn");
       break;
+
+    case changeCoderTeamA.type:
+      _connection.invoke("ChangeCoderTeamA");
+      break;
+
+    case changeCoderTeamB.type:
+      _connection.invoke("ChangeCoderTeamB");
+      break;
+
     default:
       return next(action);
   }

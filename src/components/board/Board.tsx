@@ -1,7 +1,7 @@
 import React from 'react';
 import { GameCard } from './GameCard';
 import { useStyles } from './Board.jss';
-import { cardSelector, isTheKnowAllSelector, votesSelector, playerSelector, isPlayerInTeamCurrentlyPlayingSelector } from '../../redux/game/selectors';
+import { cardSelector, isTheKnowAllSelector, votesSelector, playerSelector, isPlayerInTeamCurrentlyPlayingSelector, hasGameStartedSelector } from '../../redux/game/selectors';
 import { useSelector } from 'react-redux';
 import { Card } from '../../models/game/card';
 import { UNKNOWN } from '../../models/game/agent';
@@ -13,6 +13,7 @@ export const Board : React.FC = () =>{
     const votes = useSelector(votesSelector);
     const player = useSelector(playerSelector);
     const isPlayerInTeamCurrentlyPlaying = useSelector(isPlayerInTeamCurrentlyPlayingSelector);
+    const hasGameStarted = useSelector(hasGameStartedSelector);
 
     const hasBeenVotedByPlayer = (card: Card) => {
         return votes.filter(vote => vote.userName === player.userName && vote.word === card.word).length > 0;
@@ -21,7 +22,7 @@ export const Board : React.FC = () =>{
     const removeUnwantedData = (card: Card) : Card => {
         return {
             ...card, 
-            agent : isMapOwner || card.hasBeenRevealed ? card.agent : UNKNOWN
+            agent : isMapOwner || card.hasBeenRevealed || !hasGameStarted ? card.agent : UNKNOWN
         }
     }
     

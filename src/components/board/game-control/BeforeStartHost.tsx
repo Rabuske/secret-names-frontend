@@ -4,7 +4,7 @@ import { ButtonDesign } from '@ui5/webcomponents-react/lib/ButtonDesign';
 import { useSelector } from 'react-redux';
 import { teamASelector, teamBSelector } from '../../../redux/game/selectors';
 import { useDispatch } from 'react-redux';
-import { startGame } from '../../../redux/game/actions';
+import { startGame, changeCoderTeamA, changeCoderTeamB } from '../../../redux/game/actions';
 import { useStyles } from './GameControlWrapper.jss';
 
 
@@ -22,8 +22,30 @@ export const BeforeStartHost : React.FC = () => {
         dispatch(startGame());
     }
 
+    const handleChangeCoderTeamA = () => {
+        dispatch(changeCoderTeamA());
+    }    
+
+    const handleChangeCoderTeamB = () => {
+        dispatch(changeCoderTeamB());
+    }    
+
     return(
-        <div className={classes.startButton}>
+        <div className={classes.buttons}>
+            <div className={classes.changeCoderButtons}>
+                <Button
+                    design={ButtonDesign.Default}
+                    onClick={handleChangeCoderTeamA}
+                >
+                    Change Coder Team A
+                </Button>
+                <Button
+                    design={ButtonDesign.Reject}
+                    onClick={handleChangeCoderTeamB}
+                >
+                    Change Coder Team B
+                </Button>
+            </div>
             <Button
                 design={ButtonDesign.Accept}
                 disabled={isStartButtonDisabled()}

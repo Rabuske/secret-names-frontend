@@ -48,9 +48,8 @@ export const Team : React.FC<TeamProps> = (props) => {
                             icon={knowAllPlayer.userName === player.userName? 'map-2' : ''}
                             iconEnd={true}
                             description={player.isHost? "Host" : ''}
-                            info={knowAllPlayer.userName === player.userName? "Has the Map" : ""}
+                            info={knowAllPlayer.userName === player.userName? "Coder" : ""}
                             key={player.userName}
-
                         >
                             {player.userName}
                         </ListItem>

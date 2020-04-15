@@ -3,7 +3,7 @@ import { Text } from '@ui5/webcomponents-react/lib/Text';
 import { Label } from '@ui5/webcomponents-react/lib/Label';
 import { Card } from '../../models/game/card'
 import { useStyles } from './GameCard.jss';
-import { TEAM_A, CIVILIAN, ASSASSIN } from '../../models/game/agent';
+import { TEAM_A, CIVILIAN, ASSASSIN, UNKNOWN } from '../../models/game/agent';
 import { TEAM_B } from '../../models/game/agent';
 import { Event } from '@ui5/webcomponents-react-base';
 import { CheckBox } from '@ui5/webcomponents-react/lib/CheckBox';
@@ -31,12 +31,9 @@ export const GameCard : React.FC<GameCartProps> = (props) => {
             dispatch(removeVoteForWord({word: card.word}));
         }
     }
-    
+
     const getClassName = () => {
         let className = classes.notRevealed;
-        if(!isMapOwner && !card.hasBeenRevealed){
-            return className;
-        }
         switch(card.agent){
             case TEAM_A:
                 className = classes.teamA
@@ -50,10 +47,12 @@ export const GameCard : React.FC<GameCartProps> = (props) => {
             case ASSASSIN:
                 className = classes.assassin
                 break;
+            case UNKNOWN:
+                className = classes.notRevealed
+                break;
         }
-        if(isMapOwner && card.hasBeenRevealed){
+        if(card.hasBeenRevealed){
             className += " " + classes.revealed;
-            console.log(className);
         }
         return className;
     }
