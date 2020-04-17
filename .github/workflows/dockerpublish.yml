@@ -60,7 +60,7 @@ jobs:
         uses: azure/webapps-container-deploy@v1
         with:
           app-name: 'codinomes'
-          images: "docker.pkg.github.com/${{ github.repository }}/${{ IMAGE_NAME }}"
+          images: "docker.pkg.github.com/${{ github.repository }}/${{ env.IMAGE_NAME }}"
           
       - name: Azure logout
         run: |
