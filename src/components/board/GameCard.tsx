@@ -16,12 +16,13 @@ interface GameCartProps{
     isMapOwner: boolean;
     hasBeenVotedByPlayer: boolean;
     isFromTeamPlaying: boolean;
+    hasGameStarted: boolean;
 }
 
 export const GameCard : React.FC<GameCartProps> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
-    const { card, isMapOwner, hasBeenVotedByPlayer, isFromTeamPlaying } = props;
+    const { card, isMapOwner, hasBeenVotedByPlayer, isFromTeamPlaying, hasGameStarted } = props;
     const clue = useSelector(clueSelector);
 
     const onVoteStateChange = (event : Event) => {
@@ -58,6 +59,11 @@ export const GameCard : React.FC<GameCartProps> = (props) => {
     }
 
     const shouldDisplayCheckBox = () => {
+
+        if(!hasGameStarted){
+            return false;
+        }
+
         if(card.hasBeenRevealed){
             return false;
         }
