@@ -8,8 +8,8 @@ on:
 
     # Publish `v1.2.3` tags as releases.
     tags:
-      - v*
-
+      - v*  
+    
 env:
   IMAGE_NAME: codinomes-frontend
 
@@ -19,7 +19,7 @@ jobs:
   push:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
+  
     steps:
       - uses: actions/checkout@v2
 
@@ -50,3 +50,18 @@ jobs:
 
           docker tag image $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+          
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: 'Publish to Azure'
+        uses: azure/webapps-container-deploy@v1
+        with:
+          app-name: 'codinomes'
+          images: $IMAGE_ID
+          
+      - name: Azure logout
+        run: |
+          az logout          
