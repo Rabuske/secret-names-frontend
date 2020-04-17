@@ -30,7 +30,11 @@ export const Board : React.FC = () =>{
         <div className={classes.gridContainer}>
             {cards.map((card) => (
                 <div className={classes.gridItem} id={card.word}>
-                    <GameCard card={removeUnwantedData(card)} isMapOwner={isMapOwner} hasBeenVotedByPlayer={hasBeenVotedByPlayer(card)} isFromTeamPlaying={isPlayerInTeamCurrentlyPlaying}/>
+                    <GameCard card={removeUnwantedData(card)} 
+                              isMapOwner={isMapOwner} 
+                              hasBeenVotedByPlayer={hasBeenVotedByPlayer(card)} 
+                              isFromTeamPlaying={isPlayerInTeamCurrentlyPlaying}
+                              hasGameStarted={hasGameStarted}/>
                 </div>
             ))}
         </div>
