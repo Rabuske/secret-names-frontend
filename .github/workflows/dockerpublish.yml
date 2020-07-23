@@ -57,7 +57,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
       - name: 'Publish to Azure'
-        uses: azure/webapps-container-deploy@v1
+        uses: azure/webapps-deploy@v2
         with:
           app-name: 'codinomes'
           images: "docker.pkg.github.com/rabuske/secret-names-frontend/${{ env.IMAGE_NAME }}" 
